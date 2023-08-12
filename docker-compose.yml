@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    command: bash start.sh
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/reactnative-marketplace
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: mongodb+srv://reactnative-marketplace:reactnative-marketplace@db
+      APP_BASE_URL: http://localhost:3000
+      JWT_KEY: JWTTESTE
+      PORT: 3000
+    depends_on:
+      - db
+    networks:
+      - reactnative-marketplace-network
+  db:
+    image: mongo:5.0.19
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: reactnative-marketplace
+      MONGO_INITDB_ROOT_PASSWORD: reactnative-marketplace
+    ports:
+      - "27017:27017"
+    networks:
+      - reactnative-marketplace-network
+
+networks:
+  reactnative-marketplace-network:
+    driver: bridge
+volumes:
+  db:
