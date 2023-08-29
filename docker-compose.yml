@@ -10,7 +10,7 @@ services:
       - .:/reactnative-marketplace
     environment:
       NODE_ENV: development
-      DATABASE_URL: mongodb+srv://reactnative-marketplace:reactnative-marketplace@db
+      DATABASE_URL: mongodb://reactnative-marketplace:reactnative-marketplace@db
       APP_BASE_URL: http://localhost:3000
       JWT_KEY: JWTTESTE
       PORT: 3000
@@ -30,6 +30,7 @@ services:
 
 networks:
   reactnative-marketplace-network:
-    driver: bridge
+    name: reactnative-marketplace-network
+    external: true
 volumes:
   db:

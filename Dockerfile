@@ -8,6 +8,10 @@ RUN mkdir -p $INSTALL_PATH
 
 WORKDIR $INSTALL_PATH
 
-COPY . .
+RUN npm i nodemon@^2.0.20 -g
+
+COPY package*.json ./
 
 RUN npm i
+
+COPY . .
