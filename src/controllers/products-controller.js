@@ -91,7 +91,7 @@ module.exports = {
 
     const nameMatcher = new RegExp(name, "i")
     const categoryMatcher = new RegExp(category, "i")
-    const locationMatcher = new RegExp(location, "i")
+    const locationMatcher = location ? new RegExp(location, "i") : null
     const minPrice = +req.query.minPrice || 0
     const maxPrice = +req.query.maxPrice || Number.MAX_SAFE_INTEGER
     const orderProp = orderBy || "updatedAt"
