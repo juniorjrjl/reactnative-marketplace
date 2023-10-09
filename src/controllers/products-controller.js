@@ -3,15 +3,26 @@ const Product = require("../models/Product")
 const path = require("node:path")
 const User = require("../models/User")
 
+const fixImageUrl = (products) => 
+  products.map(p => {
+    p.images = p.images.map(i =>{
+      i.url = process.env.APP_BASE_URL + i.url
+      return i
+    })
+    return p
+  })
+
+
 module.exports = {
   index: async function (req, res) {
     try {
       const page = +req.query.page || 0
       const limit = +req.query.limit || 20
       const query = { published: true }
-      const products = await Product.find(query).sort({ updatedAt: -1 }).skip(page * limit).limit(limit)
+      let products = await Product.find(query).sort({ updatedAt: -1 }).skip(page * limit).limit(limit)
       await User.populate(products, { path: "seller", select: 'name email phone' })
       const total = await Product.countDocuments(query)
+      products = fixImageUrl(products)
       return res.json({ total, page, limit, products })
     } catch (err) {
       return res.status(400).json({ error: err.message })
@@ -22,7 +33,7 @@ module.exports = {
     try {
       const { name, description, price, published, category, addressId } = req.body
       const address = req.user.addresses.find(addr => addr._id.equals(addressId))
-      const images = req.files?.map(file => ({ filename: file.filename, url: `${process.env.APP_BASE_URL}/uploads/products/${file.filename}` }))
+      const images = req.files?.map(file => ({ filename: file.filename, url: `/uploads/products/${file.filename}` }))
       const seller = req.user._id
       const product = new Product({ name, description, price, published, category, address, images, seller })
       await product.save()
@@ -50,7 +61,7 @@ module.exports = {
     try {
       const { _id } = req.params
       const _idsToDelete = req.body._idsToDelete?.split("|") ?? []
-      const newImages = req.files?.map(file => ({ filename: file.filename, url: `${process.env.APP_BASE_URL}/uploads/products/${file.filename}` })) ?? []
+      const newImages = req.files?.map(file => ({ filename: file.filename, url: `/uploads/products/${file.filename}` })) ?? []
       const product = await Product.findById(_id)
       const imagesTotal = product.images.length - _idsToDelete?.length + newImages?.length
       if (imagesTotal > 6) {
@@ -117,8 +128,9 @@ module.exports = {
       .sort({ [orderProp]: orderDirection })
       .skip(page * limit)
       .limit(limit)
+    const productsImagesFullPath = fixImageUrl(products)
     await User.populate(products, { path: "seller", select: 'name email phone' })
     const total = await Product.countDocuments(query)
-    return res.json({ total, page, limit, products })
+    return res.json({ total, page, limit, productsImagesFullPath })
   }
 }
