@@ -2,16 +2,7 @@ const deleteFiles = require("../helpers/deleteFiles")
 const Product = require("../models/Product")
 const path = require("node:path")
 const User = require("../models/User")
-
-const fixImageUrl = (products) => 
-  products.map(p => {
-    p.images = p.images.map(i =>{
-      i.url = process.env.APP_BASE_URL + i.url
-      return i
-    })
-    return p
-  })
-
+const fixImageUrl = require("../helpers/fixImagePath")
 
 module.exports = {
   index: async function (req, res) {

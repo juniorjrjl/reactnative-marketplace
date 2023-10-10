@@ -11,7 +11,7 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: mongodb://reactnative-marketplace:reactnative-marketplace@db
-      APP_BASE_URL: https://f3b6-187-180-212-135.ngrok-free.app
+      APP_BASE_URL: https://e545-187-180-212-135.ngrok-free.app
       JWT_KEY: JWTTESTE
       PORT: 3000
     depends_on:
